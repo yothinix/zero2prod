@@ -10,10 +10,15 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Setup CI dependencies
+        run: cargo install cargo-tarpaulin 
+          && rustup component add clippy 
+          && rustup component add rustfmt
+          && cargo install cargo-audit
       - name: Build
         run: cargo build --verbose
       - name: Test
@@ -24,3 +29,5 @@ jobs:
         run: cargo clippy -- -D warnings
       - name: Formatting
         run: cargo fmt -- --check
+      - name: Security Check
+        run: cargo audit
